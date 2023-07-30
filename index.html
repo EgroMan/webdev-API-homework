@@ -111,6 +111,26 @@
       },
     ]
 
+    const fetchPromise = fetch (
+      'https://wedev-api.sky.pro/api/todos',
+      {
+        method: "POST"
+        body: {
+          text: NameInputElement.value
+        }
+      })
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        console.log(responseData)
+
+        users = responseData.todos;
+        renderUsers()
+      })
+    })
+
     const initlikes = () => {
         const likeButtons = document.querySelectorAll(".like-button");
         for (const like of likeButtons) {
@@ -128,7 +148,7 @@
           })
         }
     }
-initlikes()
+initlikes();
 
     const commentClick = () => { 
       const comment = document.querySelectorAll(".comment")
@@ -163,12 +183,12 @@ initlikes()
         </div>
       </li>`;
   })
-}
-      .join("");
+  .join("");
       ListCommentsElement.innerHTML = usersHTML;
       initlikes();
       commentClick();
       renderUsers
+}
 
     ButtonInputElement.addEventListener("click", () => {
       if (NameInputElement.value === "" || CommentInputElement.value === "") {
