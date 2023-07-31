@@ -69,22 +69,39 @@
 
   <script>
     "use strict";
-    const fetchPromise = fetch (
-      ' https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments',
-      {
+    const fetchPromise = () => {
+      if(!loud){
+        loud = true;
+        renderUsers()
+      }
+      return fetch('https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments',{
         method: "GET"
       })
+      .then(data => data.json())
+        .then(dataJson => {
+            users = dataJson.comments;
+            renderComments();
+        })
+        .then(() => {
+            loud = false;
+            renderUsers();
+        })
+    }
+    fetchPromise()
 
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-
-      jsonPromise.then((responseData) => {
-        console.log(responseData)
-
-        users = responseData.todos;
-        renderUsers()
+    const postAPI = (NameInputElement, CommentInputElement) => {
+      return fetch(
+      'https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments',
+      {
+        method: "POST",
+        body: JSON.stringify({
+          text: NameInputElement.value,
+          name: CommentInputElement.value
+        })
+      }).then(() => {
+        fetchPromise();
       })
-    })
+    }
 
     const NameInputElement = document.getElementById("text_input");
     const CommentInputElement = document.getElementById("name_input");
@@ -92,39 +109,8 @@
     const ListCommentsElement = document.getElementById("list");
     const commentDate = new Date();
     
-    let users = [
-      {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        countLikes: 3,
-        isLiked: false,
-
-      },
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: ' Мне нравится как оформлена эта страница! ❤',
-        countLikes: 75,
-        isLiked: false,
-
-      },
-    ]
-      fetch (
-      ' https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments',
-      {
-        method: "POST",
-        body: JSON.stringify({
-          text: NameInputElement.value
-        })
-      }).then((response) => {
-      response.json().then((responseData) => {
-        console.log(responseData)
-
-        users = responseData.todos;
-        renderUsers()
-      })
-    })
+    // const users = []
+      
 
     const initlikes = () => {
         const likeButtons = document.querySelectorAll(".like-button");
@@ -182,7 +168,7 @@ initlikes();
       ListCommentsElement.innerHTML = usersHTML;
       initlikes();
       commentClick();
-      renderUsers
+      renderUsers()
 }
 
     ButtonInputElement.addEventListener("click", () => {
