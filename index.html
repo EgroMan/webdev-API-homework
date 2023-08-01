@@ -69,6 +69,74 @@
 
   <script>
     "use strict";
+
+    const NameInputElement = document.getElementById("text_input");
+    const CommentInputElement = document.getElementById("name_input");
+    const ButtonInputElement = document.getElementById("addformbutton");
+    const ListCommentsElement = document.getElementById("list");
+    const commentDate = new Date();
+
+
+    const renderUsers = () => {
+  const usersHTML = users.map((user,index) => {
+    return `<li class="comment">
+        <div class="comment-header">
+          <div>${user.name}</div>
+          <div>${user.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${user.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${user.countLikes}</span>
+            <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`;
+      
+  })
+  .join("");
+      CommentInputElement.innerHTML = usersHTML;
+      initlikes();
+      commentClick();
+      // renderUsers()
+}
+const initlikes = () => {
+        const likeButtons = document.querySelectorAll(".like-button");
+        for (const like of likeButtons) {
+          like.addEventListener("click", (event) => {
+            event.stopPropagation()
+            const user = users[like.dataset.index]
+            if (user.isLiked === false) {
+              user.isLiked = true;
+              user.countLikes++;
+            } else if (user.isLiked === true) {
+              user.isLiked = false
+              user.countLikes--;
+            }
+            renderUsers(); 
+          })
+        }
+    }
+initlikes();
+
+const commentClick = () => { 
+      const comment = document.querySelectorAll(".comment")
+        comment.forEach(comment => {
+          comment.addEventListener("click",() => {
+            const existringComment = CommentInputElement.value;
+            const clikendComment = comment.textContent.trim();
+            const updatedComment = existringComment ? existringComment + " " + clikendComment : clikendComment;
+            CommentInputElement.value = updatedComment;
+          });
+        });
+      }
+
+    const users = []
+    let loud = false;
     const fetchPromise = () => {
       if(!loud){
         loud = true;
@@ -79,8 +147,8 @@
       })
       .then(data => data.json())
         .then(dataJson => {
-            users = dataJson.comments;
-            renderComments();
+            const users = dataJson.comments;
+            renderUsers();
         })
         .then(() => {
             loud = false;
@@ -103,73 +171,15 @@
       })
     }
 
-    const NameInputElement = document.getElementById("text_input");
-    const CommentInputElement = document.getElementById("name_input");
-    const ButtonInputElement = document.getElementById("addformbutton");
-    const ListCommentsElement = document.getElementById("list");
-    const commentDate = new Date();
+
     
-    const users = []
+    
       
 
-    const initlikes = () => {
-        const likeButtons = document.querySelectorAll(".like-button");
-        for (const like of likeButtons) {
-          like.addEventListener("click", (event) => {
-            event.stopPropagation()
-            const user = users[like.dataset.index]
-            if (user.isLiked === false) {
-              user.isLiked = true;
-              user.countLikes++;
-            } else if (user.isLiked === true) {
-              user.isLiked = false
-              user.countLikes--;
-            }
-            renderUsers(); 
-          })
-        }
-    }
-initlikes();
-
-    const commentClick = () => { 
-      const comment = document.querySelectorAll(".comment")
-        comment.forEach(comment => {
-          comment.addEventListener("click",() => {
-            const existringComment = CommentInputElement.value;
-            const clikendComment = comment.textContent.trim();
-            const updatedComment = existringComment ? existringComment + " " + clikendComment : clikendComment;
-            CommentInputElement.value = updatedComment;
-          });
-        });
-      }
     
 
-      const renderUsers = () => {
-  const usersHTML = users.map((user,index) => {
-    return `<li class="comment">
-        <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${user.comment}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${user.countLikes}</span>
-            <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
-          </div>
-        </div>
-      </li>`;
-  })
-  .join("");
-      ListCommentsElement.innerHTML = usersHTML;
-      initlikes();
-      commentClick();
-      renderUsers()
-}
+
+
 
     ButtonInputElement.addEventListener("click", () => {
       if (NameInputElement.value === "" || CommentInputElement.value === "") {
