@@ -102,7 +102,6 @@
       CommentInputElement.innerHTML = usersHTML;
       initlikes();
       commentClick();
-      // renderUsers()
 }
 const initlikes = () => {
         const likeButtons = document.querySelectorAll(".like-button");
@@ -135,7 +134,7 @@ const commentClick = () => {
         });
       }
 
-    const users = []
+    let users = [];
     let loud = false;
     const fetchPromise = () => {
       if(!loud){
@@ -147,7 +146,7 @@ const commentClick = () => {
       })
       .then(data => data.json())
         .then(dataJson => {
-            const users = dataJson.comments;
+            users = dataJson.comments;
             renderUsers();
         })
         .then(() => {
@@ -171,28 +170,12 @@ const commentClick = () => {
       })
     }
 
-
-    
-    
-      
-
-    
-
-
-
-
     ButtonInputElement.addEventListener("click", () => {
       if (NameInputElement.value === "" || CommentInputElement.value === "") {
         ButtonInputElement.disabled = true;
         return;
       }
-      users.push({
-      name: NameInputElement.value,
-      date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})}`,
-      comment: CommentInputElement.value,
-      countLikes: 0,
-      isLiked: false,
-    });
+      postAPI(NameInputElement, CommentInputElement);
     
     renderUsers();
     NameInputElement.value = "";
