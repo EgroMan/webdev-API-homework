@@ -123,7 +123,8 @@
       const existingComment = CommentInputElement.value;
       const clickedComment = comment.querySelector(".comment-text").textContent;
       CommentInputElement.value = existingComment + clickedComment;
-      ListCommentsElement.innerHTML = commentsHTML;
+      CommentInputElement.innerHTML = commentsHTML;
+      
     });
   });
 };
@@ -170,9 +171,6 @@ const postComment = () => {
 
   fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       text,
       name
