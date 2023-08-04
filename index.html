@@ -69,7 +69,10 @@
 
   <script>
     "use strict";
-    
+    let comments = [];
+    let users = [];
+    let commentsHTML = "";
+
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",{
         method: "GET"
       })
@@ -78,12 +81,13 @@
         const jsonPromise = response.json()
         jsonPromise.then((responseData)=>{
           comments = responseData.comments
+          users = comments.map((comment) => ({
+            isLiked: false,
+            countLikes: comment.likes,
+          }))
           renderUsers()
       })
     })
-
-    let comments = [];
-    let users = [];
 
     const NameInputElement = document.getElementById("text_input");
     const CommentInputElement = document.getElementById("name_input");
@@ -92,23 +96,54 @@
     const commentDate = new Date();
 
     
+    
+    const initlikes = () => {
+      const likeButtons = document.querySelectorAll(".like-button");
+      likeButtons.forEach((like, index) => {
+        like.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const user = users[index]; 
+          if (user.isLiked === false) {
+            user.isLiked = true;
+            user.countLikes++;
+          } else if (user.isLiked === true) {
+            user.isLiked = false;
+            user.countLikes--;
+          }
+          renderUsers();
+        });
+      });
+    };
+
+
+    const commentClick = () => {
+  const comments = document.querySelectorAll(".comment");
+  comments.forEach((comment) => {
+    comment.addEventListener("click", () => {
+      const existingComment = CommentInputElement.value;
+      const clickedComment = comment.querySelector(".comment-text").textContent;
+      CommentInputElement.value = existingComment + clickedComment;
+      ListCommentsElement.innerHTML = commentsHTML;
+    });
+  });
+};
 
     const renderUsers = () => {
-  let commentsHTML = comments.map((i,index) => {
+  let commentsHTML = comments.map((comment,index) => {
     return `<li class="comment">
         <div class="comment-header">
-          <div>${i.name}</div>
-          <div>${i.date}</div>
+          <div>${comment.author.name}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${i.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${i.countLikes}</span>
-            <button class="like-button ${i.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
           </div>
         </div>
       </li>`;
@@ -120,91 +155,61 @@
 }
 
 
-
-
-const initlikes = () => {
-        const likeButtons = document.querySelectorAll(".like-button");
-        for (const like of likeButtons) {
-          like.addEventListener("click", (event) => {
-            event.stopPropagation()
-            const user = users[like.dataset.index]
-            if (user.isLiked === false) {
-              user.isLiked = true;
-              user.countLikes++;
-            } else if (user.isLiked === true) {
-              user.isLiked = false
-              user.countLikes--;
-            }
-            renderUsers(); 
-          })
-        }
-    }
-initlikes();
-
-const commentClick = () => {
-  const comments = document.querySelectorAll(".comment");
-  comments.forEach((comment) => {
-    comment.addEventListener("click", () => {
-      const existingComment = CommentInputElement.value;
-      const clickedComment = comment.querySelector(".comment-text").textContent;
-      CommentInputElement.value = existingComment + clickedComment;
-      ListCommentsElement.value = updatedComments;
-    });
-  });
-};
-            
-
-    
-    
-
-const fetchPromiseNew = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
+const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
       {
         method: "POST",
         body: JSON.stringify({
           text: NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
           name: CommentInputElement.value
-          
         })
       })
-    
+      
+const postComment = () => {
+  const text = NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
+  const name = CommentInputElement.value;
 
-      fetchPromiseNew.then((response)=>{
-  console.log(response) 
-  const jsonPromiseNew = response.json()
-  jsonPromiseNew.then((responseData)=>{
-console.log(responseData)
-  comments = responseData.comments
+  fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text,
+      name
+    })
+  })
+  .then(response => response.json())
+  .then(responseData => {
+    console.log(responseData);
+    // Обновление списка комментариев
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
+      method: "GET"
+    });
 
-
-  const fetchPromiseNew = fetch(
-    "https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
-  {
-    method: "GET"
+    fetchPromise.then(response => response.json())
+    .then(responseData => {
+      comments = responseData.comments;
+      renderUsers();
+    });
+  })
+  .catch(error => {
+    console.log(error);
   });
-
-console.log(fetchPromiseNew)
-
-fetchPromiseNew.then((response)=>{
-  console.log(response) 
-  const jsonPromiseNew = response.json()
-  jsonPromiseNew.then((responseData)=>{
-    console.log(responseData)
-  comments = responseData.comments
-  
-  renderUsers ()
-  })})
-  })})
+};
 
     ButtonInputElement.addEventListener("click", () => {
-      if (NameInputElement.value === "" || CommentInputElement.value === "") {
-        ButtonInputElement.disabled = true;
-        return;
-      }
-    
-    renderUsers();
+  if (NameInputElement.value === "" || CommentInputElement.value === "") {
+    ButtonInputElement.disabled = true;
+  } else {
+    // postComment();
+  }
+});
+      // if (NameInputElement.value === "" || CommentInputElement.value === "") {
+      //   ButtonInputElement.disabled = true;
+      //   return;
+      // 
     NameInputElement.value = "";
     CommentInputElement.value = "";
-  });
 
   </script>
 </html>
