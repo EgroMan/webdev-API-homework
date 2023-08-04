@@ -69,6 +69,11 @@
 
   <script>
     "use strict";
+
+    const clearInputFields = () => {
+  NameInputElement.value = "";
+  CommentInputElement.value = "";
+};
     let comments = [];
     let users = [];
     let commentsHTML = "";
@@ -102,19 +107,19 @@
       likeButtons.forEach((like, index) => {
         like.addEventListener("click", (event) => {
           event.stopPropagation();
-          const user = users[index]; 
-          if (user.isLiked === false) {
-            user.isLiked = true;
-            user.countLikes++;
-          } else if (user.isLiked === true) {
-            user.isLiked = false;
-            user.countLikes--;
+          const comments = users[index]; 
+          if (comments.isLiked === false) {
+            comments.isLiked = true;
+            comments.countLikes++;
+          } else if (comments.isLiked === true) {
+            comments.isLiked = false;
+            comments.countLikes--;
           }
           renderUsers();
         });
       });
     };
-
+initlikes()
 
     const commentClick = () => {
   const comments = document.querySelectorAll(".comment");
@@ -131,10 +136,11 @@
 
     const renderUsers = () => {
   let commentsHTML = comments.map((comment,index) => {
+    const commentDate = new Date();
     return `<li class="comment">
         <div class="comment-header">
           <div>${comment.author.name}</div>
-          <div>${comment.date}</div>
+          <div>${commentDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -166,8 +172,8 @@ const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgo
       })
       
 const postComment = () => {
-  const text = NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
-  const name = CommentInputElement.value;
+  const text = CommentInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
+  const name = NameInputElement.value;
 
   fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
     method: "POST",
@@ -199,16 +205,10 @@ const postComment = () => {
   if (NameInputElement.value === "" || CommentInputElement.value === "") {
     ButtonInputElement.disabled = true;
   } else {
-    // postComment();
+    postComment();
+    clearInputFields()
   }
 });
-      // if (NameInputElement.value === "" || CommentInputElement.value === "") {
-      //   ButtonInputElement.disabled = true;
-      //   return;
-      // 
-    NameInputElement.value = "";
-    CommentInputElement.value = "";
-
   </script>
 </html>
 
