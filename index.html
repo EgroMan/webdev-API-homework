@@ -107,13 +107,13 @@
       likeButtons.forEach((like, index) => {
         like.addEventListener("click", (event) => {
           event.stopPropagation();
-          const comments = users[index]; 
-          if (comments.isLiked === false) {
-            comments.isLiked = true;
-            comments.countLikes++;
-          } else if (comments.isLiked === true) {
-            comments.isLiked = false;
-            comments.countLikes--;
+          const currentLike = comments[index]; 
+          if (currentLike.isLiked === false) {
+            currentLike.isLiked = true;
+            currentLike.countLikes++;
+          } else if (currentLike.isLiked === true) {
+            currentLike.isLiked = false;
+            currentLike.countLikes--;
           }
           renderUsers();
         });
@@ -136,11 +136,12 @@ initlikes()
 
     const renderUsers = () => {
   let commentsHTML = comments.map((comment,index) => {
-    const commentDate = new Date();
+    const commentDate = new Date(comment.date);
+    const timeDate = commentDate.toLocaleDateString() + ' ' +commentDate.getHours() + ':' + commentDate.getMinutes();
     return `<li class="comment">
         <div class="comment-header">
           <div>${comment.author.name}</div>
-          <div>${commentDate}</div>
+          <div>${timeDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
