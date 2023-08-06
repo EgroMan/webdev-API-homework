@@ -100,27 +100,25 @@
     const ListCommentsElement = document.getElementById("list");
     const commentDate = new Date();
 
-    
-    
-    const initlikes = () => {
-      const likeButtons = document.querySelectorAll(".like-button");
-      likeButtons.forEach((like, index) => {
-        like.addEventListener("click", (event) => {
-          event.stopPropagation();
-          const currentLike = comments[index]; 
-          if (currentLike.isLiked === false) {
-            currentLike.isLiked = true;
-            currentLike.countLikes++;
-          } else if (currentLike.isLiked === true) {
-            currentLike.isLiked = false;
-            currentLike.countLikes--;
+    const like = () => {
+      const likeButtons = document.querySelectorAll(".like-button")
+      for(const like of likeButtons){
+        like.addEventListener('click',(event) => {
+          event.stopPropagation()
+          const com = comments[like.dataset.index]
+          let a = com.likes
+          if(com.isLiked === false) {
+            com.isLiked = true
+            like.classList.add("-active-like")
+            com.likes++
+          } else if (com.isliked === true){
+            com.isliked = false
+            com.likes--
           }
-          renderUsers();
-        });
-      });
-    };
-initlikes()
-
+          renderUsers()
+        })
+      }
+    }
     const commentClick = () => {
   const comments = document.querySelectorAll(".comment");
   comments.forEach((comment) => {
@@ -159,7 +157,7 @@ initlikes()
   .join("");
   ListCommentsElement.innerHTML = commentsHTML;
   commentClick()
-  initlikes()
+  like()
 }
 
 
