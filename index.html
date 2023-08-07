@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div id="name">Глеб Фокин</div>
-            <div id="date">12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div id = "answer" class="comment-text" data-comment>
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div id="name">Варвара Н.</div>
-            <div id="date">13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div id = "answer" class="comment-text" data-comment>
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        
       </ul>
 
 
@@ -69,172 +36,138 @@
 
   <script>
     "use strict";
-    // const buttonElement = document.getElementById('add-form-button');
-    // const listElement = document.getElementById('list');
-    // const inputNameElement = document.getElementById('text_input');
-    // // const nowElement = document.getElementById('date');
-    // const inputTextElement = document.getElementById('name_input');
- 
 
-    // const now = new Date();
-    // const options = {
-    //   year: 'numeric',
-    //   month: 'numeric',
-    //   day: 'numeric',
-    //   hour: 'numeric',
-    //   minute: 'numeric',
-    // }
+    const clearInputFields = () => {
+  NameInputElement.value = "";
+  CommentInputElement.value = "";
+};
+    let comments = [];
+    let users = [];
+    let commentsHTML = "";
 
-    // const formatter = new Intl.DateTimeFormat("ru", options);
-    // const date = formatter.format(now);
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",{
+        method: "GET"
+      })
 
-    // buttonElement.addEventListener('click', () => {
-    //   inputNameElement.style.backgroundColor = "";
-    //   inputTextElement.style.backgroundColor = "";
-    //   if (inputNameElement.value ==="" || inputTextElement.value === ""){
-    //     inputNameElement.style.backgroundColor = "red";
-    //     inputTextElement.style.backgroundColor = "red";
-    //     return;
-        
-    //   }
-      
-        
-    //   const oldListHtml = listElement.innerHTML;
-    //   listElement.innerHTML = oldListHtml + `<li class="comment">
-    //     <div class ="comment-header">
-    //       <div>${inputNameElement.value}</div>
-    //       <div class="comment-header">${date}</div>
-    //       </div>
-    //       <div class="comment-body">
-    //       <div class="comment-text">
-    //       ${inputTextElement.value}
-    //       </div>
-    //       <div class="comment-footer">
-    //         <div class="likes">
-    //           <span class="likes-counter">0</span>
-    //           <button class="like-button -active-like"></button>
-    //         </div>
-    //       </div>
-    //     </li>`
-    //     inputNameElement.value = "";
-    //     inputTextElement.value = "";
-    // })
-    
+      fetchPromise.then((response) =>{
+        const jsonPromise = response.json()
+        jsonPromise.then((responseData)=>{
+          comments = responseData.comments
+          users = comments.map((comment) => ({
+            isLiked: false,
+            like: comment.likes,
+          }))
+          renderUsers()
+      })
+    })
 
-    // ЛАЙКИ
     const NameInputElement = document.getElementById("text_input");
     const CommentInputElement = document.getElementById("name_input");
     const ButtonInputElement = document.getElementById("addformbutton");
     const ListCommentsElement = document.getElementById("list");
     const commentDate = new Date();
-    
-    const users = [
-      {
-        name: 'Глеб Фокин',
-        date: '12.02.22 12:18',
-        comment: 'Это будет первый комментарий на этой странице',
-        countLikes: 3,
-        isLiked: false,
 
-      },
-      {
-        name: 'Варвара Н.',
-        date: '13.02.22 19:22',
-        comment: ' Мне нравится как оформлена эта страница! ❤',
-        countLikes: 75,
-        isLiked: false,
+    const like = () => {
+      const likeButtons = document.querySelectorAll(".like-button")
+      for(const like of likeButtons){
+        like.addEventListener('click',(event) => {
+          event.stopPropagation()
+          const com = comments[like.dataset.index]
+          let a = com.likes
+          if(com.isLiked === false) {
+            com.isLiked = true
+            like.classList.add("-active-like")
+            com.likes++
+          } else if (com.isLiked === true){
+            com.isLiked = false
+            com.likes--
+          }
+          renderUsers()
+        })
+      }
+    }
+    const commentClick = () => {
+  const comments = document.querySelectorAll(".comment");
+  comments.forEach((comment) => {
+    comment.addEventListener("click", () => {
+      const existingComment = CommentInputElement.value;
+      const clickedComment = comment.querySelector(".comment-text").textContent;
+      CommentInputElement.value = existingComment + clickedComment;
+      CommentInputElement.innerHTML = commentsHTML;
+      
+    });
+  });
+};
 
-      },
-    ]
-
-    const initlikes = () => {
-        const likeButtons = document.querySelectorAll(".like-button");
-        for (const like of likeButtons) {
-          like.addEventListener("click", (event) => {
-            event.stopPropagation()
-            const user = users[like.dataset.index]
-            if (user.isLiked === false) {
-              user.isLiked = true;
-              user.countLikes++;
-            } else if (user.isLiked === true) {
-              user.isLiked = false
-              user.countLikes--;
-            }
-            renderUsers(); 
-          });
-        }
-      };
-initlikes()
-
-
-const renderUsers = () => {
-  const usersHTML = users.map((user,index) => {
+    const renderUsers = () => {
+  let commentsHTML = comments.map((comment,index) => {
+    const commentDate = new Date(comment.date);
+    const timeDate = commentDate.toLocaleDateString() + ' ' +commentDate.getHours() + ':' + commentDate.getMinutes();
     return `<li class="comment">
         <div class="comment-header">
-          <div>${user.name}</div>
-          <div>${user.date}</div>
+          <div>${comment.author.name}</div>
+          <div>${timeDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${user.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${user.countLikes}</span>
-            <button class="like-button ${user.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
           </div>
         </div>
       </li>`;
-      const commentClick = () =>{
-        const comment = document.querySelectorAll(".comment")
-        comment.forEach(comment => {
-          comment.addEventListener("click",() => {
-            const existringComment = CommentInputElement.value;
-            const clikendComment = comment.textContent.trim();
-            const updatedComment = existringComment ? existringComment + " " + clikendComment : clikendComment;
-            CommentInputElement.value = updatedComment;
-          });
+  })
+  .join("");
+  ListCommentsElement.innerHTML = commentsHTML;
+  commentClick()
+  like()
+}
+
+
+const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          text: NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
+          name: CommentInputElement.value
         })
-      }
-    })
-      .join("");
+      })
       
-      ListCommentsElement.innerHTML = usersHTML;
-      initlikes();
-      commentClick()
-    };
+const postComment = () => {
+  const text = CommentInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
+  const name = NameInputElement.value;
 
-
-    ButtonInputElement.addEventListener("click", () => {
-
-      if (NameInputElement.value === "" || CommentInputElement.value === "") {
-        ButtonInputElement.disabled = true;
-        return;
-      }
-   
-  
-      users.push({
-
-      name: NameInputElement.value,
-      date: `${commentDate.toLocaleDateString('numeric')} ${commentDate.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"})
-      }`,
-      comment: CommentInputElement.value,
-      countLikes: 0,
-      isLiked: false,
-    });
-    
-    renderUsers();
-    NameInputElement.value = "";
-    CommentInputElement.value = "";
+fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {  
+  method: "POST",
+  body: JSON.stringify({ text, name })
+})
+.then(response => response.json())
+.then(responseData => {  
+  console.log(responseData);
+  return fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
+    method: "GET"
   });
-
-
-// КОМЕНТАРИИ
-
-
-
+})
+.then(response => response.json())
+.then(responseData => {
+  comments = responseData.comments;
+  renderUsers();
+})
+.catch(error => {
+  console.log(error);
+});
+}
+    ButtonInputElement.addEventListener("click", () => {
+  if (NameInputElement.value === "" || CommentInputElement.value === "") {
+    ButtonInputElement.disabled = true;
+  } else {
+    postComment();
+    clearInputFields()
+  }
+});
   </script>
 </html>
-
-
