@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div id="name">Глеб Фокин</div>
-            <div id="date">12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" data-comment>
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div id="name">Варвара Н.</div>
-            <div id="date">13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text" data-comment>
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
+        
       </ul>
 
 
@@ -88,7 +55,7 @@
           comments = responseData.comments
           users = comments.map((comment) => ({
             isLiked: false,
-            countLikes: comment.likes,
+            like: comment.likes,
           }))
           renderUsers()
       })
@@ -111,8 +78,8 @@
             com.isLiked = true
             like.classList.add("-active-like")
             com.likes++
-          } else if (com.isliked === true){
-            com.isliked = false
+          } else if (com.isLiked === true){
+            com.isLiked = false
             com.likes--
           }
           renderUsers()
@@ -174,32 +141,26 @@ const postComment = () => {
   const text = CommentInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
   const name = NameInputElement.value;
 
-  fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      text,
-      name
-    })
-  })
-  .then(response => response.json())
-  .then(responseData => {
-    console.log(responseData);
-    // Обновление списка комментариев
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
-      method: "GET"
-    });
-
-    fetchPromise.then(response => response.json())
-    .then(responseData => {
-      comments = responseData.comments;
-      renderUsers();
-    });
-  })
-  .catch(error => {
-    console.log(error);
+fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {  
+  method: "POST",
+  body: JSON.stringify({ text, name })
+})
+.then(response => response.json())
+.then(responseData => {  
+  console.log(responseData);
+  return fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
+    method: "GET"
   });
-};
-
+})
+.then(response => response.json())
+.then(responseData => {
+  comments = responseData.comments;
+  renderUsers();
+})
+.catch(error => {
+  console.log(error);
+});
+}
     ButtonInputElement.addEventListener("click", () => {
   if (NameInputElement.value === "" || CommentInputElement.value === "") {
     ButtonInputElement.disabled = true;
@@ -210,5 +171,3 @@ const postComment = () => {
 });
   </script>
 </html>
-
-
