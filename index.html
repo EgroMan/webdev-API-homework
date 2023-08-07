@@ -46,7 +46,7 @@
     let commentsHTML = "";
 
     const fetchAndRenderUsers = () =>{
-      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",{
+      return fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",{
         method: "GET"
       })
       .then ((response) => {
@@ -67,9 +67,7 @@
     const ButtonInputElement = document.getElementById("addformbutton");
     const ListCommentsElement = document.getElementById("list");
     const commentDate = new Date();
-    
-const text = CommentInputElement.value;
-const name = NameInputElement.value;
+
 
     const like = () => {
       const likeButtons = document.querySelectorAll(".like-button")
@@ -90,6 +88,7 @@ const name = NameInputElement.value;
         })
       }
     }
+
     const commentClick = () => {
   const comments = document.querySelectorAll(".comment");
   comments.forEach((comment) => {
@@ -131,6 +130,8 @@ const name = NameInputElement.value;
   like()
   fetchAndRenderUsers()
 }
+
+
         ButtonInputElement.disabled = true;
         ButtonInputElement.textContent = "Элемент добовляеться..."
     const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
@@ -148,7 +149,10 @@ const name = NameInputElement.value;
     }
     fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {  
       method: "POST",
-      body: JSON.stringify({ text, name })
+      body: JSON.stringify({
+        text: NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
+          name: CommentInputElement.valuetext, name 
+    })
     })
     .then ((response) => {
       return response
@@ -160,29 +164,13 @@ const name = NameInputElement.value;
       return response
     })
     .then (() => {
-      fetchAndRenderUsers()
+      return fetchAndRenderUsers()
     })
     .then ((data) => {
           ButtonInputElement.disabled = false;
           ButtonInputElement.textContent = "Добавить";
         });
     renderUsers()
-    // .then(response => response.json())
-    // .then(responseData => {  
-    //   console.log(responseData);
-    //   return fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {
-    //     method: "GET"
-    //   });
-    // })
-    // .then(response => response.json())
-    // .then(responseData => {
-    //   comments = responseData.comments;
-    //   renderUsers();
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    // });
-    // }
         ButtonInputElement.addEventListener("click", () => {
       if (NameInputElement.value === "" || CommentInputElement.value === "") {
         ButtonInputElement.disabled = true;
