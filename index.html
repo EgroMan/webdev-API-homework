@@ -8,176 +8,227 @@
 
   <body>
     <div class="container">
-      <ul id="list" class="comments">
-        
-      </ul>
+      <ul id="list" class="comments"></ul>
 
 
-      <div class="add-form">
-        <input
-          id="text_input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          id="name_input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="addformbutton" class="add-form-button">Написать</button>
-        </div>
-      </div>
-    </div>
+      <div class="add-form">Загрузка...</div>
   </body>
 
   <script>
-    "use strict";
+const inputName = document.getElementById("add-form-name");
+const inputText = document.getElementById("add-form-text");
+// const buttonSend = document.querySelector(".add-form-button");
+const listComments = document.querySelector(".comments");
+const add_form = document.querySelector(".add-form");
 
-    const clearInputFields = () => {
-  NameInputElement.value = "";
-  CommentInputElement.value = "";
-};
-    let comments = [];
-    let users = [];
-    let commentsHTML = "";
+const formString = `
+    <input
+      type="text"
+      id="add-form-name"
+      class="add-form-name"
+      placeholder="Введите ваше имя"
+    />
+    <textarea
+      type="textarea"
+      id="add-form-text"
+      class="add-form-text"
+      placeholder="Введите ваш коментарий"
+      rows="4"
+      wrap="soft"
+      maxlength="100"
+    ></textarea>
+    <div class="add-form-row">
+      <button class="add-form-button">Написать</button>
+    </div>
+  `;
 
-    const fetchAndRenderUsers = () =>{
-      return fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",{
-        method: "GET"
-      })
-      .then ((response) => {
-        return response.json()
-      })
-      .then((responseData)=>{
-          comments = responseData.comments
-          users = comments.map((comment) => ({
-            isLiked: false,
-            like: comment.likes,
-          }))
-          renderUsers()
-      })
-    }
-    
-    const NameInputElement = document.getElementById("text_input");
-    const CommentInputElement = document.getElementById("name_input");
-    const ButtonInputElement = document.getElementById("addformbutton");
-    const ListCommentsElement = document.getElementById("list");
-    const commentDate = new Date();
+let PEOPLE = [];
 
-
-    const like = () => {
-      const likeButtons = document.querySelectorAll(".like-button")
-      for(const like of likeButtons){
-        like.addEventListener('click',(event) => {
-          event.stopPropagation()
-          const com = comments[like.dataset.index]
-          let a = com.likes
-          if(com.isLiked === false) {
-            com.isLiked = true
-            like.classList.add("-active-like")
-            com.likes++
-          } else if (com.isLiked === true){
-            com.isLiked = false
-            com.likes--
-          }
-          renderUsers()
+const appPromise = () => {
+    return fetch(
+        "https://wedev-api.sky.pro/api/v1/:egorka/comments",
+        {
+            method: "GET",
+        }
+    )
+        .then((responseData) => {
+            add_form.innerHTML = `Загрузка`;
+            return responseData;
         })
-      }
-    }
-
-    const commentClick = () => {
-  const comments = document.querySelectorAll(".comment");
-  comments.forEach((comment) => {
-    comment.addEventListener("click", () => {
-      const existingComment = CommentInputElement.value;
-      const clickedComment = comment.querySelector(".comment-text").textContent;
-      CommentInputElement.value = existingComment + clickedComment;
-      CommentInputElement.innerHTML = commentsHTML;
-      
-    });
-  });
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            add_form.innerHTML = formString;
+            PEOPLE = responseData.comments;
+            renderPeople();
+        });
 };
 
-    const renderUsers = () => {
-  let commentsHTML = comments.map((comment,index) => {
-    const commentDate = new Date(comment.date);
-    const timeDate = commentDate.toLocaleDateString() + ' ' +commentDate.getHours() + ':' + commentDate.getMinutes();
-    return `<li class="comment">
-        <div class="comment-header">
-          <div>${comment.author.name}</div>
-          <div>${timeDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment.text}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button ${comment.isLiked ? '-active-like' : ''}" data-index='${index}'></button>
-          </div>
-        </div>
-      </li>`;
-  })
-  .join("");
-  ListCommentsElement.innerHTML = commentsHTML;
-  commentClick()
-  like()
-  fetchAndRenderUsers()
+const promiseSend = () => {
+    return fetch(
+        "https://wedev-api.sky.pro/api/v1/:egorka/comments",
+        {
+            method: "POST",
+            body: JSON.stringify({
+                text: inputText.value,
+                name: inputName.value,
+            }),
+        }
+    )
+        .then((responseData) => {
+            add_form.innerHTML = `Загрузка`;
+            return responseData;
+        })
+        .then((responseData) => {
+            return fetch(
+                "https://wedev-api.sky.pro/api/v1/:egorka/comments",
+                {
+                    method: "GET",
+                }
+            );
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            PEOPLE = responseData.comments;
+            add_form.innerHTML = formString;
+
+            addComment();
+            renderPeople();
+        });
+};
+
+const addDate = (value) => {
+    let nowDate = new Date(value);
+    let time = {
+        hour: "numeric",
+        minute: "numeric",
+    };
+    let date = {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+    };
+
+    return (
+        nowDate.toLocaleDateString("ru", date) +
+        " " +
+        nowDate.toLocaleTimeString("ru", time)
+    );
+};
+
+function addComment() {
+    const buttonSend = document.querySelector(".add-form-button");
+    const inputName = document.getElementById("add-form-name");
+    const inputText = document.getElementById("add-form-text");
+    buttonSend.addEventListener("click", (event) => {
+        inputName.classList.remove("error");
+        inputText.classList.remove("error");
+        if (inputName.value.length === 0 && inputText.value.length === 0) {
+            inputName.classList.add("error");
+            return;
+        }
+        if (inputName.value.length === 0) {
+            inputName.classList.add("error");
+            return;
+        }
+        if (inputText.value.length === 0 && inputText.value.length === 0) {
+            inputText.classList.add("error");
+            return;
+        }
+        event.stopPropagation();
+
+        promiseSend();
+
+        // renderPeople();
+        inputName.value = "";
+        inputText.value = "";
+    });
 }
 
-
-        ButtonInputElement.disabled = true;
-        ButtonInputElement.textContent = "Элемент добовляеться..."
-    const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          text: NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
-          name: CommentInputElement.value
-        })
-      })
-      
-    const postComment = () => {
-      const text = CommentInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>");
-      const name = NameInputElement.value;
-    }
-    fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments", {  
-      method: "POST",
-      body: JSON.stringify({
-        text: NameInputElement.value.replaceAll("QUOTE_BEGIN","<textarea>").replaceAll("QUOTE_END","</textarea><br>"),
-          name: CommentInputElement.valuetext, name 
-    })
-    })
-    .then ((response) => {
-      return response
-    })
-    .then ((response) => {
-      return response.json()
-    })
-    .then ((response) => {
-      return response
-    })
-    .then (() => {
-      return fetchAndRenderUsers()
-    })
-    .then ((data) => {
-          ButtonInputElement.disabled = false;
-          ButtonInputElement.textContent = "Добавить";
+const addLike = () => {
+    const likeButtons = document.querySelectorAll(".like-button");
+    likeButtons.forEach((likeButtonEl, index) => {
+        likeButtonEl.addEventListener("click", () => {
+            let likeEl = PEOPLE[index];
+            console.log(likeEl);
+            if (likeEl.isLiked === false) {
+                likeEl.isLiked = true;
+                likeEl.likes++;
+                renderPeople();
+            } else {
+                likeEl.isLiked = false;
+                likeEl.likes--;
+                renderPeople();
+            }
         });
-    renderUsers()
-        ButtonInputElement.addEventListener("click", () => {
-      if (NameInputElement.value === "" || CommentInputElement.value === "") {
-        ButtonInputElement.disabled = true;
-      } else {
-        postComment();
-        clearInputFields()
-      }
     });
+};
+
+const getLike = (elementPeople) => {
+    return elementPeople ? "like-button -active-like" : "like-button";
+};
+
+const takeCommentText = () => {
+    const comentText = document.querySelectorAll(".comment-text");
+    const textArea = document.getElementById("add-form-text");
+    comentText.forEach((textElement, index) => {
+        textElement.addEventListener("click", (event) => {
+            event.stopPropagation();
+            let textValue = textElement.textContent;
+            return (textArea.value = `>${textValue} ${PEOPLE[index].name}  Ответ - `);
+        });
+    });
+};
+const checkError = () => {
+    buttonSend.addEventListener("click", () => {
+        inputName.classList.remove("error");
+        inputText.classList.remove("error");
+        if (inputName.value === "") {
+            inputName.classList.add("error");
+            return;
+        }
+        if (inputName.value === "") {
+            inputText.classList.add("error");
+            return;
+        }
+    });
+};
+
+const renderPeople = () => {
+    let render = PEOPLE.map((el, i) => {
+        return `<li class="comment">
+    <div class="comment-header">
+      <div>${el.author.name}</div>
+      <div>${addDate(el.date)}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text"  data-index="${i}">
+        ${el.text}
+      </div>
+    </div>
+    <div class="comment-footer">
+    <button class="del-form-button" data-index="${i}">Удалить</button>
+      <div class="likes">
+        <div>
+          <span class="likes-counter">${el.likes}</span>
+          <button class="${getLike(el.isLiked)}" ></button></div>
+      </div>
+    </div>
+  </li>`;
+    }).join("");
+
+    listComments.innerHTML = render;
+    addLike();
+
+    takeCommentText();
+};
+
+appPromise();
+addComment();
+renderPeople();
+
   </script>
 </html>
