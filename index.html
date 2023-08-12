@@ -9,15 +9,33 @@
   <body>
     <div class="container">
       <ul id="list" class="comments"></ul>
-
-
-      <div class="add-form">Загрузка...</div>
+      <div class="add-form">
+        <input
+          type="text"
+          id="add-form-name"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          id="add-form-text"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          wrap="soft"
+          maxlength="100"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button">Написать</button>
+        </div>
+      </div>
+    </div>
   </body>
 
   <script>
 const inputName = document.getElementById("add-form-name");
 const inputText = document.getElementById("add-form-text");
-// const buttonSend = document.querySelector(".add-form-button");
+const buttonSend = document.querySelector(".add-form-button");
 const listComments = document.querySelector(".comments");
 const add_form = document.querySelector(".add-form");
 
@@ -52,7 +70,7 @@ const appPromise = () => {
         }
     )
         .then((responseData) => {
-            add_form.innerHTML = `Загрузка`;
+            add_form.innerHTML = `Загрузка...`;
             return responseData;
         })
         .then((response) => {
@@ -74,10 +92,9 @@ const promiseSend = () => {
                 text: inputText.value,
                 name: inputName.value,
             }),
-        }
-    )
+        })
         .then((responseData) => {
-            add_form.innerHTML = `Загрузка`;
+            add_form.innerHTML = `Загрузка...`;
             return responseData;
         })
         .then((responseData) => {
@@ -139,7 +156,7 @@ function addComment() {
             return;
         }
         event.stopPropagation();
-
+        addComment();
         promiseSend();
 
         // renderPeople();
@@ -226,7 +243,7 @@ const renderPeople = () => {
 };
 
 appPromise();
-addComment();
+
 renderPeople();
 
   </script>
