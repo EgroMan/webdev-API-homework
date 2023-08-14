@@ -80,7 +80,7 @@ const name = NameInputElement.value;
             return response.json();
         })
         .then((responseData)=>{
-            add_form.innerHTML = add_form;
+            add_form.innerHTML = "";
             renderUsers = responseData.comments;
             renderUsers()
         })
@@ -126,14 +126,18 @@ const name = NameInputElement.value;
     commentClick()
     like()
 }
-        ButtonInputElement.disabled = true;
-        ButtonInputElement.textContent = "Элемент добовляеться..."
+const addComment = () => {
+    const text = CommentInputElement.value;
+    const name = NameInputElement.value;
+    ButtonInputElement.disabled = true;
+    ButtonInputElement.textContent = "Элемент добавляется...";
+}
     const fetchPromiseNew = () => fetch("https://wedev-api.sky.pro/api/v1/Egor-Torgowichev/comments",
     {
         method: "POST",
         body: JSON.stringify({
-            text: NameInputElement.value,
-            name: CommentInputElement.value
+            text: CommentInputElement.value,
+            name: NameInputElement.value
         })
     })
     .then((responseData) => {
@@ -154,14 +158,11 @@ const name = NameInputElement.value;
     .then((responseData) => {
             users = responseData.comments;
             add_form.innerHTML = add_form;
+            renderUsers()
         })
-    renderUsers()
 
     ButtonInputElement.addEventListener("click", () => {
-    const text = CommentInputElement.value;
-    const name = NameInputElement.value;
-    ButtonInputElement.disabled = true;
-    ButtonInputElement.textContent = "Элемент добавляется...";
+    addComment()
     
 });
 </script>
