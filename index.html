@@ -68,7 +68,9 @@
             method: "GET"
         })
             .then((responseData) => {
-                
+                if(!responseData.ok){
+                    throw new Error("Ошибка при получении комментариев")
+                }
                 return responseData;
             })
             .then((response) => {
@@ -78,6 +80,10 @@
                 loaderBlock.textContent = "";
                 comments = responseData.comments;
                 renderUsers()
+            })
+            .catch((error)=>{
+                alert("Произошла ошибка при получении коммментариев");
+                console.log(error);
             })
     }
 
@@ -140,6 +146,9 @@
             })
         })
         .then((responseData) => {
+            if (!responseData.ok) {
+                throw new Error("Ошибка при добавлении комментария");
+            }
             loaderBlock.textContent = `Загрузка`;
             return responseData;
         })
@@ -152,12 +161,19 @@
             )
         })
         .then((response) => {
+            if (!response.ok) {
+                throw new Error("Ошибка при получении комментариев");
+            }
             return response.json();
         })
         .then((responseData) => {
             comments = responseData.comments;
             loaderBlock.textContent = "";
             renderUsers()
+        })
+        .catch((error) => {
+            alert("Произошла ошибка при добавлении комментария");
+            console.error(error)
         })
 
     ButtonInputElement.addEventListener("click", () => {
@@ -168,3 +184,4 @@ fetchAndRenderUsers()
 </script>
 
 </html>
+
