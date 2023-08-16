@@ -145,6 +145,23 @@
                 name: NameInputElement.value
             })
         })
+        .then ((response) =>{
+            console.log(response)
+            if (response.status === 201){
+                return response.json()
+            } else {
+                return response.json().then((errorData) => {
+                    if (response.status === 400){
+                        throw new error("BadRequest:" + errorData.message)
+                    } else if (response.status === 500){
+                        throw new error("ServerUnavailable: Непредвиденная ошибкуа сервера")
+                    }else {
+                        throw new error("ServerError: Сервер упал")
+                    }
+                })
+            }
+
+        })
         .then((responseData) => {
             if (!responseData.ok) {
                 throw new Error("Ошибка при добавлении комментария");
