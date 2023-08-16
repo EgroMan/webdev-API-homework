@@ -189,8 +189,16 @@
             renderUsers()
         })
         .catch((error) => {
-            alert("Произошла ошибка при добавлении комментария");
-            console.error(error)
+            if (error.message.startsWith("BadRequest:")){
+                alert('Некорректные данные. Заполните все поля и проверьте введеные данные')
+            } else if (error.message.startsWith("ServerUnavailable:")){
+                alert('Сервер временно не работает. Попробуйте попозже')
+            } else if (error.message.startsWith("ServerError:") || error.message.startsWith("Error:")){
+                alert('Что то пошло не так, попробуйте попозже')
+            } else {
+                alert('Неизвестная ошибка')
+            }
+            console.warn(error)
         })
 
     ButtonInputElement.addEventListener("click", () => {
