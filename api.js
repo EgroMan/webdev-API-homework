@@ -44,7 +44,7 @@ export function publicComment({ name, text, date, forceError, token }) {
 
 export function registerUser({ login, password, name }) {
 
-  return fetch('https://webdev-hw-api.vercel.app/api/user', {
+  return fetch('https://wedev-api.sky.pro/api/user', {
     method: "POST",
     body: JSON.stringify({
       login,
@@ -65,7 +65,7 @@ export function registerUser({ login, password, name }) {
 
 export function loginUser({ login, password }) {
 
-  return fetch('https://webdev-hw-api.vercel.app/api/user/login', {
+  return fetch('https://wedev-api.sky.pro/api/user/login', {
     method: "POST",
     body: JSON.stringify({
       login,

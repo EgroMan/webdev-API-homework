@@ -53,7 +53,6 @@ export function renderLoginComponent({
               /> <br/>
                 `
       }
- 
               <input
                 type="text"
                 id="login-input"
