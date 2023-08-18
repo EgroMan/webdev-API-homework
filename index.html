@@ -68,7 +68,9 @@
             method: "GET"
         })
             .then((responseData) => {
-                
+                if(!responseData.ok){
+                    throw new Error("Ошибка при получении комментариев")
+                }
                 return responseData;
             })
             .then((response) => {
@@ -78,6 +80,10 @@
                 loaderBlock.textContent = "";
                 comments = responseData.comments;
                 renderUsers()
+            })
+            .catch((error)=>{
+                alert("Произошла ошибка при получении коммментариев");
+                console.log(error);
             })
     }
 
@@ -139,7 +145,27 @@
                 name: NameInputElement.value
             })
         })
+        .then ((response) =>{
+            console.log(response)
+            if (response.status === 201){
+                return response.json()
+            } else {
+                return response.json().then((errorData) => {
+                    if (response.status === 400){
+                        throw new Error("BadRequest:" + errorData.message)
+                    } else if (response.status === 500){
+                        throw new Error("ServerUnavailable: Непредвиденная ошибкуа сервера")
+                    }else {
+                        throw new Error("ServerError: Сервер упал")
+                    }
+                })
+            }
+
+        })
         .then((responseData) => {
+            if (!responseData.ok) {
+                throw new Error("Ошибка при добавлении комментария");
+            }
             loaderBlock.textContent = `Загрузка`;
             return responseData;
         })
@@ -152,12 +178,27 @@
             )
         })
         .then((response) => {
+            if (!response.ok) {
+                throw new Error("Ошибка при получении комментариев");
+            }
             return response.json();
         })
         .then((responseData) => {
             comments = responseData.comments;
             loaderBlock.textContent = "";
             renderUsers()
+        })
+        .catch((error) => {
+            if (error.message.startsWith("BadRequest:")){
+                alert('Некорректные данные. Заполните все поля и проверьте введеные данные')
+            } else if (error.message.startsWith("ServerUnavailable:")){
+                alert('Сервер временно не работает. Попробуйте попозже')
+            } else if (error.message.startsWith("ServerError:") || error.message.startsWith("Error:")){
+                alert('Что то пошло не так, попробуйте попозже')
+            } else {
+                alert('Неизвестная ошибка')
+            }
+            console.warn(error)
         })
 
     ButtonInputElement.addEventListener("click", () => {
@@ -168,3 +209,4 @@ fetchAndRenderUsers()
 </script>
 
 </html>
+
