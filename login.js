@@ -1,4 +1,4 @@
-import { getDate } from "./data";
+import { getDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
 
 export function renderLoginComponent({
