@@ -1,6 +1,7 @@
 import { getDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
 import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
+import format from "date-fns/format"
 import _ from 'lodash'
 
 export function renderLoginComponent({
@@ -29,7 +30,6 @@ export function renderLoginComponent({
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
           <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-      <p><i>Задача создана: ${country === "ru" ? formatDateToRu(new Date(comments.created_at)) : formatDateToUs(new Date(comments.created_at))}</i></p>
         </div>
       </div>
     </li>`
