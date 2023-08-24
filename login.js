@@ -20,7 +20,7 @@ export function renderLoginComponent({
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${new Date(user.date)}</div>
+        <div>${format(user.Date, "yyyy-MM-dd hh.mm.ss")}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>
