@@ -51,7 +51,7 @@ export const renderComments = () => {
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
-      <div>${new Date(user.date)}</div>
+      <div>${format(user.Date, "yyyy-MM-dd hh.mm.ss")}</div>
     </div>
     <div class="comment-body" data-comments="${index}" >
     <div class ="comment-text"> ${user.text} </div>
@@ -60,7 +60,6 @@ export const renderComments = () => {
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
         <button  data-heart="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-        <p><i>Задача создана: ${country === "ru" ? formatDateToRu(new Date(comments.created_at)) : formatDateToUs(new Date(comments.created_at))}</i></p>
       </div>
     </div>
   </li>`
