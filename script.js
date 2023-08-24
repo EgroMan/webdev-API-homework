@@ -1,7 +1,8 @@
 import { getCommentsList, publicComment } from "./api.js";
 import { getDate, safeInputText, delay } from "./data.js"
 import { renderLoginComponent } from "./login.js";
-
+import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
+import { format } from "date-fns";
 let token = null;
 let comments = [];
 let name;
@@ -43,13 +44,14 @@ export const renderComments = () => {
     });
     return;
   }
-
+  const country ="ru";
   const commentsHtml =
     comments.map((user, index,) => {
+      const createDate = format (new Date(comments.create_at), 'dd/MM/yyyy hh:mm');
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
-      <div>${getDate(user.date)}</div>
+      <div>${new Date(user.date)}</div>
     </div>
     <div class="comment-body" data-comments="${index}" >
     <div class ="comment-text"> ${user.text} </div>
@@ -58,7 +60,7 @@ export const renderComments = () => {
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
         <button  data-heart="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-    
+        <p><i>Задача создана: ${country === "ru" ? formatDateToRu(new Date(comments.created_at)) : formatDateToUs(new Date(comments.created_at))}</i></p>
       </div>
     </div>
   </li>`

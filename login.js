@@ -1,5 +1,7 @@
 import { getDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
+import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
+import _ from 'lodash'
 
 export function renderLoginComponent({
   appEl,
@@ -11,13 +13,14 @@ export function renderLoginComponent({
   let isLoginMode = true;
 
   const renderForm = () => {
-
+    const country ="ru";
     const commentsHtml =
       comments.map((user, index) => {
+        const createDate = format (new Date(comments.create_at), 'dd/MM/yyyy hh:mm');
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${getDate(user.date)}</div>
+        <div>${new Date(user.date)}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>
@@ -26,7 +29,7 @@ export function renderLoginComponent({
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
           <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-      
+      <p><i>Задача создана: ${country === "ru" ? formatDateToRu(new Date(comments.created_at)) : formatDateToUs(new Date(comments.created_at))}</i></p>
         </div>
       </div>
     </li>`
@@ -129,7 +132,7 @@ export function renderLoginComponent({
         registerUser({
           login: login,
           password: password,
-          name: name,
+          name: _.capitalize(name),
 
         }).then((user) => {
 
