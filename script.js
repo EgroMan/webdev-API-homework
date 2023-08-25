@@ -2,7 +2,7 @@ import { getCommentsList, publicComment } from "./api.js";
 import { getDate, safeInputText, delay } from "./data.js"
 import { renderLoginComponent } from "./login.js";
 import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
-import { format } from "date-fns";
+import format from "date-fns/format";
 let token = null;
 let comments = [];
 let name;
