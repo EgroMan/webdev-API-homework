@@ -1,8 +1,7 @@
 import { getDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
-import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
-import format from "date-fns/format"
-import _ from 'lodash'
+import format from "date-fns/format";
+import {addDate} from "./datalive.js";
 
 export function renderLoginComponent({
   appEl,
@@ -21,7 +20,7 @@ export function renderLoginComponent({
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${format(user.Date, "yyyy-MM-dd hh.mm.ss")}</div>
+        <div>${addDate(user.date)}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>

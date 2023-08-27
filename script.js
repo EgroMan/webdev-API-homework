@@ -1,8 +1,8 @@
 import { getCommentsList, publicComment } from "./api.js";
 import { getDate, safeInputText, delay } from "./data.js"
 import { renderLoginComponent } from "./login.js";
-import { formatDateToRu, formatDateToUS } from "./library/formatDate/formatDate.js";
 import format from "date-fns/format";
+import {addDate} from "./datalive.js";
 let token = null;
 let comments = [];
 let name;
@@ -51,7 +51,7 @@ export const renderComments = () => {
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
-      <div>${format(user.Date, "yyyy-MM-dd hh.mm.ss")}</div>
+      <div>$${addDate(user.date)}</div>
     </div>
     <div class="comment-body" data-comments="${index}" >
     <div class ="comment-text"> ${user.text} </div>

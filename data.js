@@ -33,11 +33,3 @@ export function delay(interval = 300) {
   });
 }
 
-const now = new Date();
-
-format(now, "yyyy-MM-dd hh.mm.ss"); // 26/03/2023 10:33
-format(now, "yyyy-MM-dd hh.mm.ss"); // 03-26-2023 10:33
-format(now, "yyyy-MM-dd hh.mm.ss"); // 26.03.2023 10:33:41
-
-
-
