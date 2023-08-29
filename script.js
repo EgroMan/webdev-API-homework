@@ -47,7 +47,7 @@ export const renderComments = () => {
   const commentsHtml =
     comments.map((user, index,) => {
       const commentDate = new Date(comment.date);
-        const addDate = commentDate.toLocaleDateString() + ' ' + commentDate.getHours() + ':' + commentDate.getMinutes();
+      const timeDate = commentDate.toLocaleDateString() + ' ' + commentDate.getHours() + ':' + commentDate.getMinutes();
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
