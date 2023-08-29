@@ -1,22 +1,22 @@
 import format from "date-fns/format";
 
-export const addDate = (date) =>{
-    date = new Date(date);
-    return format(date, "yyyy-MM-dd hh.mm.ss");
-}
+// export const addDate = (date) =>{
+//     date = new Date(date);
+//     return format(date, "yyyy-MM-dd hh.mm.ss");
+// }
 
 // функция для даты
-export function getDate(date) {
-  const options = {
-    year: '2-digit',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }
-  const newDate = new Date(date);
-  return newDate.toLocaleString('ru-RU', options).replace(',', '');
-}
+// export function getDate(date) {
+//   const options = {
+//     year: '2-digit',
+//     month: 'numeric',
+//     day: 'numeric',
+//     hour: '2-digit',
+//     minute: '2-digit',
+//   }
+//   const newDate = new Date(date);
+//   return newDate.toLocaleString('ru-RU', options).replace(',', '');
+// }
 
 
 // Функция обезопасить ввод данных

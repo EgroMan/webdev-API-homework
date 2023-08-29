@@ -1,7 +1,7 @@
 import { getDate, addDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
 import format from "date-fns/format";
-import {addDate} from "./datalive.js";
+
 
 export function renderLoginComponent({
   appEl,
@@ -16,12 +16,11 @@ export function renderLoginComponent({
     
     const commentsHtml =
       comments.map((user, index) => {
-        const commentDate = new Date(comment.date);
-        const timeDate = commentDate.toLocaleDateString() + ' ' + commentDate.getHours() + ':' + commentDate.getMinutes();
+        const createDate = format(new Date(user.date), 'yyyy-mm-ff hh.mm.ss');
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${addDate(user.date)}</div>
+        <div>${createDate}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>

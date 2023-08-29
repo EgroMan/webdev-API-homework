@@ -1,6 +1,7 @@
 import { getCommentsList, publicComment } from "./api.js";
-import { getDate, safeInputText, delay, addDate } from "./data.js"
+import { getDate, safeInputText, delay, } from "./data.js"
 import { renderLoginComponent } from "./login.js";
+import format from "date-fns/format";
 
 let token = null;
 let comments = [];
@@ -46,12 +47,11 @@ export const renderComments = () => {
   const country ="ru";
   const commentsHtml =
     comments.map((user, index,) => {
-      const commentDate = new Date(comment.date);
-      const timeDate = commentDate.toLocaleDateString() + ' ' + commentDate.getHours() + ':' + commentDate.getMinutes();
+      const createDate = format(new Date(user.date), 'yyyy-mm-dd hh.mm.ss');
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
-      <div>$${addDate(user.date)}</div>
+      <div>${createDate}</div>
     </div>
     <div class="comment-body" data-comments="${index}" >
     <div class ="comment-text"> ${user.text} </div>
