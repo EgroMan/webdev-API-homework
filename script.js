@@ -252,8 +252,7 @@ export const renderComments = () => {
   pushCommentwithEnter(); //Отправка по Enter
   reComment(); //  Ответ на коммент
   buttonBlock(); // Блокировка кнопки
-
+  fetchGetAndRender();
 };
 
 renderComments();
-fetchGetAndRender();
