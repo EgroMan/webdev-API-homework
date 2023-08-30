@@ -16,7 +16,7 @@ export function renderLoginComponent({
     
     const commentsHtml =
       comments.map((user, index) => {
-        const createDate = format(new Date(user.date), 'yyyy-mm-ff hh.mm.ss');
+        const createDate = format(new Date(user.date), 'yyyy-mm-dd HH.MM.SS');
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>

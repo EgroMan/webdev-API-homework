@@ -44,10 +44,9 @@ export const renderComments = () => {
     });
     return;
   }
-  const country ="ru";
   const commentsHtml =
     comments.map((user, index,) => {
-      const createDate = format(new Date(user.date), 'yyyy-mm-dd hh.mm.ss');
+      const createDate = format(new Date(user.date), 'yyyy-mm-dd HH.MM.SS');
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
@@ -252,7 +251,7 @@ export const renderComments = () => {
   pushCommentwithEnter(); //Отправка по Enter
   reComment(); //  Ответ на коммент
   buttonBlock(); // Блокировка кнопки
-  fetchGetAndRender();
+  
 };
-
+fetchGetAndRender();
 renderComments();
