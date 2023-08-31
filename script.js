@@ -1,6 +1,7 @@
 import { getCommentsList, publicComment } from "./api.js";
-import { getDate, safeInputText, delay } from "./data.js"
+import { getDate, safeInputText, delay, } from "./data.js"
 import { renderLoginComponent } from "./login.js";
+import format from "date-fns/format";
 
 let token = null;
 let comments = [];
@@ -43,13 +44,13 @@ export const renderComments = () => {
     });
     return;
   }
-
   const commentsHtml =
     comments.map((user, index,) => {
+      const createDate = format(new Date(user.date), 'yyyy-mm-dd HH.MM.SS');
       return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}" data-id "${user.id}" >
     <div class="comment-header">
       <div>${user.author.name}</div>
-      <div>${getDate(user.date)}</div>
+      <div>${createDate}</div>
     </div>
     <div class="comment-body" data-comments="${index}" >
     <div class ="comment-text"> ${user.text} </div>
@@ -58,7 +59,6 @@ export const renderComments = () => {
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
         <button  data-heart="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-    
       </div>
     </div>
   </li>`
@@ -251,8 +251,7 @@ export const renderComments = () => {
   pushCommentwithEnter(); //Отправка по Enter
   reComment(); //  Ответ на коммент
   buttonBlock(); // Блокировка кнопки
-
+  
 };
-
-renderComments();
 fetchGetAndRender();
+renderComments();

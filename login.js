@@ -1,5 +1,7 @@
-import { getDate } from "./data.js";
+import { getDate, addDate } from "./data.js";
 import { loginUser, registerUser } from './api.js';
+import format from "date-fns/format";
+
 
 export function renderLoginComponent({
   appEl,
@@ -11,13 +13,14 @@ export function renderLoginComponent({
   let isLoginMode = true;
 
   const renderForm = () => {
-
+    
     const commentsHtml =
       comments.map((user, index) => {
+        const createDate = format(new Date(user.date), 'yyyy-mm-dd HH.MM.SS');
         return `<li class="comment"  data-name="${user.author.name}" data-comment="${user.text}">
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${getDate(user.date)}</div>
+        <div>${createDate}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>
@@ -26,7 +29,6 @@ export function renderLoginComponent({
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
           <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
-      
         </div>
       </div>
     </li>`
@@ -129,7 +131,7 @@ export function renderLoginComponent({
         registerUser({
           login: login,
           password: password,
-          name: name,
+          name: _.capitalize(name),
 
         }).then((user) => {
 
